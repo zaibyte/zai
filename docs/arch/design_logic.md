@@ -175,11 +175,11 @@ More details about Index, [here](index.md)
 
 ### GC
 
-SSD-like GC is implemented in Zai write buffer.
+A fast GC is implemented in Zai write buffer.
 
-SSD-like GC means Zai's GC algorithm is like SSD's. There will be not much extra space need in GC process and fast, it's important for business model which deletes files often. 
+There will be not much extra space need in GC process and fast, it's important for business model which deletes files often. 
 
-### Self-Defined Storage
+### User Defined Storage
 
 Zai is not only a out of box storage system. It should be easily modified for professional users to fit needs better. The simple design and detailed guide are important.
 

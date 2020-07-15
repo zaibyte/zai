@@ -58,7 +58,7 @@ Zai is built for LOSF, so it's reasonable to keep usable storage capacity in a s
 
 If the usable storage capacity is 10PB (not include write buffer):
 
-1024(1024 boxes per namespace is far away for the limitation, but it's already huge in practice) * (10PB/4KB) = 2814 trillions 
+1024(1024 boxes per namespace) * (10PB/4KB) = 2814 trillions 
 
 ## Q: How about more than 2814 trillions? 
 

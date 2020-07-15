@@ -62,4 +62,7 @@ Zai relies on correct clock. NTP is needed.
 >
 > - In practice, it's a good choice to deploy at least 3 Zai node. 
     Help to reduce impact when nodes down.
+>
 > - Two CPU core for one NVMe SSD is a balanced choice in most cases.
+>
+> - QLC SSD is a good choice for ZBuf.
