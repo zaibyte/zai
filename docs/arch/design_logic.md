@@ -51,6 +51,12 @@ they need the data, and low cost when they don't need it.
 The gap between computer node and storage node is high, we usually use multi-levels cache in 
 storage system which supports machine learning jobs.
 
+#### CDN
+
+More and more data will be put in CDN for accelerating network performance for avoiding backend servers overload. But in present, most of CDNs are just using rough file systems to provide cache
+services. What they need is a storage system to support various request, high IPOS and low latency.
+What's more, they need this storage system could have a efficient GC. 
+
 ### They Do Want These
 
 > Data Tiers

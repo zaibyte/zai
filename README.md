@@ -1,4 +1,4 @@
-Zai: User defined object storage with high performance and thousand trillion capacity
+Zai: User defined object storage with high performance and thousands trillion capacity
 ===
 
 Zai is developed and maintained by Temple3x (temple3x@gmail.com) and his cat, Noodles.
@@ -7,13 +7,17 @@ Zai is developed and maintained by Temple3x (temple3x@gmail.com) and his cat, No
 
 Zai is a user defined object storage System suited for LOSF (lots of small files) with high performance and thousand trillion capacity.
 
-- __Thousand Trillion Capacity__
+- __Thousands Trillion Capacity__
 
     Size of an object can range from [1B to 1TB, up to 2814 trillion objects](./docs/FAQ.md) in a single namespace.
     
 - __User Defined__
 
     Zai is easily upgrade/modify, building your own zai is strongly recommended. 
+    
+    Feel free to build filesystem or implement S3 protocol upon Zai, it's easy to gain all Zai features in this way. 
+    I believe Zai could help you achieve business success.
+    
     There is a [document](./docs/dev-guide/build_your_distribution.md) to show you
     how to set up highly customized storage service step by step.
     

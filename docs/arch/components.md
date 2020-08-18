@@ -28,7 +28,7 @@ It is recommended to deploy keeper at least three nodes.
 
 ## ZBuf
 
-ZBuf is using for store data temporally for higher performance.
+ZBuf is used for store data temporally for higher performance.
 
 ## ZCold
 
