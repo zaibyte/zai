@@ -1,5 +1,5 @@
 Basic Concepts
-==
+===
 
 ### oid
 
@@ -28,7 +28,7 @@ Any extent in the same group can be recovered by others.
 
 #### groupID
 
-And each group has an unique ID, groupID.
+And each group has a unique ID, groupID.
 
 >- Type: uint32
    
