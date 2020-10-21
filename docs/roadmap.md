@@ -20,7 +20,12 @@ This document defines the roadmap for Zai development.
 - [ ] Disk I/O (Big data block) 
 - [ ] RPC (Big data block)
 
-## Testing & Adjustment (11/30/2020 - 1/16/2020)
+## POSIX-ish File System (11/30/2020 - 12/31/2020)
+
+- [ ] Based on Fuse
+- [ ] Cache policy & embed Zai
+
+## Testing & Adjustment (12/31/2020 - 2/26/2020)
 
 - [ ] Testing - Unit/Integration/Perf/Load/Stress Testing
 - [ ] Adjustment - Actually it's the "real" development...
