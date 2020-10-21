@@ -12,8 +12,8 @@ This document defines the roadmap for Zai development.
 
 ## Structures(Internal) (10/26/2020 - 11/13/2020)
 
-- [ ] Key-Value Pairs (ZMap, Keeper...) - Adaptive Radix Tree
-- [ ] In memory cache - ?
+- [ ] Key-Value Pairs (ZMap, Keeper...) - Redis
+- [ ] In memory cache - Hopscotch Hashing for ZMap, ? for data
 
 ## Basic packages (11/16/2020 - 11/27/2020)
 
@@ -29,6 +29,9 @@ This document defines the roadmap for Zai development.
 
 - [ ] Testing - Unit/Integration/Perf/Load/Stress Testing
 - [ ] Adjustment - Actually it's the "real" development...
+
+## Next...
+- [ ] Adaptive Radix Tree
 
 # Components
 
