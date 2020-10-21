@@ -42,7 +42,7 @@ ZMap will be embedded in keeper, the basic information will only include version
 The Keeper interface provides the state of all the ZBuf servers and the cluster information. See the following example for the information about a single-node ZBuf cluster:
 
 ```bash
-curl http://127.0.0.1:7001/pd/api/v1/zbuf
+curl http://127.0.0.1:7001/kp/api/v1/zbuf
 {
   "count": 1,  # The number of ZBuf nodes.
   "zbuf": [  # The list of ZBuf nodes.
@@ -64,6 +64,7 @@ curl http://127.0.0.1:7001/pd/api/v1/zbuf
       }
     }
   ]
+}
 ```
 
 ## Use the metrics interface

@@ -22,7 +22,7 @@ extentID is the extent's name.
 >- seq Type: uint8
 
 ### group
-The unit of fault-tolerance of extents, it could be 3 replicas of one extent or an Erasure Code Stripe of several extents.
+The unit of fault-tolerance of extents, it could be 2/3 replicas of one extent, or an Erasure Code Stripe of several extents.
 
 Any extent in the same group can be recovered by others.
 
