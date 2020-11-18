@@ -14,7 +14,15 @@ For:
 
 CentOS8 & Linux-4.19 (LTS) 
 
-**Only choose the LTS version of kernel.**
+## LTS version of kernel.**
+
+We will only use the LTS version of kernel:
+
+> 4.19
+>>
+> 5.4
+>>
+> 5.10
 
 For:
 
@@ -36,9 +44,15 @@ Zai could run on Mac too.
 
 ## IO Uring
 
+**Linux-5.4+**
+
 In the next, we may use IO Uring to accelerate the I/O. If we want this, Linux-5.4+(LTS) is a better choice.
 
 ## FUSE
+
+**Linux-5.1+**
+
+In Linux-5.1, FUSE got [multi improvements](http://lkml.iu.edu/hypermail/linux/kernel/1903.1/03160.html).
 
 MAX_PAGES option supports was added in Linux-4.20, help to improve performance
 
