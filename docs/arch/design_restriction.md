@@ -53,8 +53,6 @@ Public could & local NAS (maybe depracated) will be the backup storage, so Zai w
 ### Focus on hundreds TB and millions files
 
 For 256 TB usable capacity, 32 MB each file, there will be about 10 millions files.
-The total meta size should be < 1GB, which means 128B/file. Good enough for Tesamc's needs.
+The total meta size should be < 1 GB, which means 128B/file. Good enough for Tesamc's needs.
 
-
-                            
-                           
+                       
