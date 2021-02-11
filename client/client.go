@@ -16,6 +16,9 @@ type Client interface {
 	GetObj(oid uint64, objData io.Writer, start, end int64, timeout time.Duration) error
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
+	// UpdateObj updates oid's data [start, end) with newData.
+	// Returns newOid, after updating.
+	UpdateObj(oid uint64, start, end int64, newData io.Reader) (newOid uint64, err error)
 	// Close closes the client.
 	Close()
 }
