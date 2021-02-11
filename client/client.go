@@ -1,9 +1,21 @@
 package client
 
+import (
+	"io"
+	"time"
+)
+
 // Client is Zai client.
 // It shouldn't be used after calling Close().
 type Client interface {
-
+	// PutObj puts object to the box which this Zai belongs to.
+	// Returns oid & any error.
+	PutObj(objData io.Reader, size int64, timeout time.Duration) (oid uint64, err error)
+	// GetObj gets object by oid.
+	// start & end is the range bytes of object: [start, end)
+	GetObj(oid uint64, objData io.Writer, start, end int64, timeout time.Duration) error
+	// DeleteObj deletes object by oid.
+	DeleteObj(oid uint64, timeout time.Duration) error
 	// Close closes the client.
 	Close()
 }
