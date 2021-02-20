@@ -13,6 +13,9 @@ type Client interface {
 	PutObj(objData io.Reader, size int64, timeout time.Duration) (oid uint64, err error)
 	// GetObj gets object by oid.
 	// start & end is the range bytes of object: [start, end)
+	// Both of start & end will be aligned to uid.GrainSize.
+	// The min range is 1 uid.GrainSize, when both of start & end are 0, means getting
+	// the whole object.
 	GetObj(oid uint64, objData io.Writer, start, end int64, timeout time.Duration) error
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
