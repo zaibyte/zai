@@ -19,7 +19,7 @@ type Client interface {
 	// Return how many bytes written into objData.
 	// GetObj will try to connect all replicas untill succeed.
 	// It will return ErrReplicasCollapse if all replicas return disk/extent_broken error.
-	GetObj(oid uint64, objData io.Writer, offset, n int64, timeout time.Duration) (written int64, err error)
+	GetObj(oid uint64, objData io.Writer, offset, n int64, isClone bool, timeout time.Duration) (written int64, err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
 	// UpdateObj updates oid's data [offset, offset+newData_len] with newData.
