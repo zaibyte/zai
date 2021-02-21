@@ -17,6 +17,8 @@ type Client interface {
 	// If the offset < 0, start with 0.
 	// If offset+n > object_size, it will read until meeting the end of the object.
 	// Return how many bytes written into objData.
+	// GetObj will try to connect all replicas untill succeed.
+	// It will return disk/extent_broken only if all replicas return broken error.
 	GetObj(oid uint64, objData io.Writer, offset, n int64, timeout time.Duration) (written int64, err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
