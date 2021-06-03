@@ -3,6 +3,14 @@ Exporter
 
 exporter exports metrics of Zai to prometheus.
 
+# Features
+
+Exporter relies on plugins to generate metrics:
+
+1. Overview of the whole zai box
+
+2. Offline jobs (include broken disks)
+
 # Metric Lib
 
 The official prometheus client is being used, not like other places which using
