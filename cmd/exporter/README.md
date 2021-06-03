@@ -3,7 +3,7 @@ Exporter
 
 exporter exports metrics of Zai to prometheus.
 
-# Features
+## Features
 
 Exporter relies on plugins to generate metrics:
 
@@ -11,7 +11,7 @@ Exporter relies on plugins to generate metrics:
 
 2. Offline jobs (include broken disks)
 
-# Metric Lib
+## Metric Lib
 
 The official prometheus client is being used, not like other places which using
 [victoria_metrics](https://github.com/VictoriaMetrics/metrics).
