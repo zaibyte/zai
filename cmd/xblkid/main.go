@@ -55,6 +55,6 @@ func printIDs(dn string) {
 	}
 
 	if !found {
-		fmt.Printf("dev: %s not found", dn)
+		fmt.Printf("dev: %s not found\n", dn)
 	}
 }
