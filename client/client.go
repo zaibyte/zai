@@ -26,7 +26,7 @@ type Client interface {
 	Close(err error)
 }
 
-// ObjClient is Zai client which provides object(in byte slice) accessing.
+// ObjClient is Zai client which provides uid.NormalObj object(in byte slice) accessing.
 type ObjClient interface {
 	// PutObj puts object to the box which this Zai belongs to (relies on which keeper it's using).
 	// Returns non-zero oid if err is nil.
@@ -37,7 +37,6 @@ type ObjClient interface {
 	// PutObj will try to put object to a group until succeed or reach the max retires.
 	//
 	// digest is the digest of objData.
-	// digest could be 0 if hasn't been calculated.
 	PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error)
 	// GetObj gets object by oid.
 	// range bytes of object: [offset, offset+n)

@@ -11,18 +11,13 @@ import (
 
 // ProClient is professional ObjClient which implements ObjClient interface with cache & advanced features.
 type ProClient struct {
-	cfg *ProClientConfig
+	cfg *Config
 	kfc kc.FClient
 }
 
 var _proClient ObjClient = new(ProClient)
 
-// ProClientConfig is the configs of ProClient.
-type ProClientConfig struct {
-	KeeperConfig kc.FCConfig `toml:"keeper_config"`
-}
-
-func NewProClient(cfg *ProClientConfig) (*ProClient, error) {
+func NewProClient(cfg *Config) (*ProClient, error) {
 
 	kfc, err := kc.NewFC(cfg.KeeperConfig)
 	if err != nil {
