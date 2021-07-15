@@ -1,33 +1,54 @@
 package client
 
 import (
-	"io"
+	"context"
 	"time"
+
+	"g.tesamc.com/IT/zaipkg/xdigest"
+
+	kc "g.tesamc.com/IT/keeper/client"
 )
 
-// ProClient is professional Client which implements Client interface with cache & advanced features.
-// It's the Client in production env.
+// ProClient is professional ObjClient which implements ObjClient interface with cache & advanced features.
 type ProClient struct {
-	cfg *ProClientConfig `toml:"cfg"`
+	cfg *ProClientConfig
+	kfc kc.FClient
 }
+
+var _proClient ObjClient = new(ProClient)
 
 // ProClientConfig is the configs of ProClient.
 type ProClientConfig struct {
-	BoxConfigs []BoxConfig `toml:"box_configs"`
+	KeeperConfig kc.FCConfig `toml:"keeper_config"`
 }
 
-// BoxConfig is the configs of ProClient for each box.
-type BoxConfig struct {
-	BoxID       uint32   `toml:"box_id"`
-	KeeperAddrs []string `toml:"keeper_addrs"`
+func NewProClient(cfg *ProClientConfig) (*ProClient, error) {
+
+	kfc, err := kc.NewFC(cfg.KeeperConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ProClient{
+		cfg: cfg,
+		kfc: kfc,
+	}, nil
 }
 
+func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, size int64, err error) {
 
-func (p *ProClient) PutObj(objData io.Reader, timeout time.Duration) (oid uint64, read int64, err error) {
-	panic("implement me")
+	if digest == 0 {
+		xdigest.Sum32(objData)
+	}
+
+	for i := 0; i < 3; i++ {
+
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		p.kfc.GetWritableGroup(ctx, len(objData))
+	}
 }
 
-func (p *ProClient) GetObj(oid uint64, objData io.Writer, offset, n int64, isClone bool, timeout time.Duration) (written int64, err error) {
+func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (size int64, err error) {
 	panic("implement me")
 }
 
@@ -35,11 +56,14 @@ func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {
 	panic("implement me")
 }
 
-func (p *ProClient) UpdateObj(oid uint64, offset, newData io.Reader) (newOid uint64, read int64, err error) {
+func (p *ProClient) Start() error {
 	panic("implement me")
 }
 
-func (p *ProClient) Close() {
+func (p *ProClient) Stop() {
 	panic("implement me")
 }
 
+func (p *ProClient) Close(err error) {
+	panic("implement me")
+}
