@@ -7,17 +7,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"g.tesamc.com/IT/zaipkg/xerrors"
-	"g.tesamc.com/IT/zaipkg/xlog"
-
-	"g.tesamc.com/IT/zproto/pkg/metapb"
-
-	"g.tesamc.com/IT/zaipkg/orpc/otcp"
-	"g.tesamc.com/IT/zaipkg/uid"
-
-	"g.tesamc.com/IT/zaipkg/orpc"
+	"g.tesamc.com/IT/zaipkg/xmath/xrand"
 
 	kc "g.tesamc.com/IT/keeper/client"
+	"g.tesamc.com/IT/zaipkg/orpc"
+	"g.tesamc.com/IT/zaipkg/orpc/otcp"
+	"g.tesamc.com/IT/zaipkg/uid"
+	"g.tesamc.com/IT/zaipkg/xerrors"
+	"g.tesamc.com/IT/zaipkg/xlog"
+	"g.tesamc.com/IT/zproto/pkg/metapb"
 )
 
 // BaseClient is the basic ObjClient implementation without cache or other advanced features.
@@ -25,6 +23,7 @@ type BaseClient struct {
 	cfg      *Config
 	kfc      kc.FClient
 	oclients sync.Map // zBuf_addr : orpc.Client
+	fatigues sync.Map // disk_id:fatigues (float64)
 }
 
 var _baseClient Client = new(BaseClient)
@@ -70,18 +69,22 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration
 
 		for _, ext := range g.Exts {
 			if ext.State == metapb.ExtentState_Extent_ReadWrite && rwDoing < replicas {
+
 				go func(extid uint32) {
 					defer wg.Done()
 
 					zBuf, err2 := b.kfc.GetZBuf(context.Background(), ext.InstanceId)
 					if err2 != nil {
-						xlog.ErrorID(reqid, err2.Error())
+						xlog.WarnID(reqid, err2.Error())
+						return
+					}
+
+					if zBuf.State != metapb.ZBufState_ZBuf_Up {
+						xlog.WarnID(reqid, "zBuf not up")
 						return
 					}
 
 					// TODO in present, we only using the first address.
-					// TODO deal with disconnect zBuf.
-					// TODO deal with address changes.
 					c, err2 := b.getOClient(zBuf.Address[0])
 					if err2 != nil {
 						xlog.ErrorID(reqid, err2.Error())
@@ -117,8 +120,60 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration
 	return
 }
 
-func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (size int64, err error) {
-	panic("implement me")
+func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
+
+	reqid := uid.MakeReqID()
+
+	gid := uid.GetGroupIDFromOID(oid)
+	g, err := b.kfc.GetGroup(context.Background(), gid)
+	if err != nil {
+		xlog.ErrorID(reqid, err.Error())
+		return err
+	}
+
+	candidates := make([]uint32, 0, len(g.Exts))
+	for extID, ext := range g.Exts {
+		if ext.State != metapb.ExtentState_Extent_Clone && ext.State != metapb.ExtentState_Extent_Broken {
+			candidates = append(candidates, extID)
+		}
+	}
+
+	for i := 0; i < DefaultMaxGetRetries; i++ {
+		j := xrand.Uint32n(uint32(len(candidates)))
+		extID := candidates[j]
+		ext := g.Exts[extID]
+
+		zBuf, err2 := b.kfc.GetZBuf(context.Background(), ext.InstanceId)
+		if err2 != nil {
+			xlog.WarnID(reqid, err2.Error())
+			err = err2
+			continue
+		}
+
+		if zBuf.State == metapb.ZBufState_ZBuf_Tombstone || zBuf.State == metapb.ZBufState_ZBuf_Disconnected {
+			xlog.WarnID(reqid, "zBuf not ready for get")
+			err = orpc.ErrInstanceDown
+			continue
+		}
+
+		// TODO in present, we only using the first address.
+		c, err2 := b.getOClient(zBuf.Address[0])
+		if err2 != nil {
+			xlog.WarnID(reqid, err2.Error())
+			err = err2
+			continue
+		}
+
+		err = c.GetObj(reqid, oid, extID, buf, offset, n, isClone, timeout)
+		if err != nil {
+			xlog.WarnID(reqid, err.Error())
+			continue
+		} else {
+			return nil
+		}
+	}
+
+	return
 }
 
 func (b *BaseClient) DeleteObj(oid uint64, timeout time.Duration) error {

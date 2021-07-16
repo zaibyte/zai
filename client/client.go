@@ -11,6 +11,7 @@ import (
 // because the max transport size is 4MB.
 const (
 	DefaultMaxPutRetries      = 3 // There is no need to retry many times.
+	DefaultMaxGetRetries      = 3
 	DefaultPutTimeout         = 3 * time.Second
 	DefaultGetTimeout         = 3 * time.Second
 	DefaultDeleteTimeout      = 3 * time.Second
@@ -45,7 +46,11 @@ type ObjClient interface {
 	// n is the length you want to get.
 	// Return how many bytes written into buf.
 	// GetObj will try to connect all replicas until succeed.
-	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (size int64, err error)
+	//
+	// Warn:
+	// We assume len(buf) = n,
+	// offset & n are legal.
+	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
 }
