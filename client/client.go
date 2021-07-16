@@ -49,7 +49,7 @@ type ObjClient interface {
 	//
 	// Warn:
 	// We assume len(buf) = n,
-	// offset & n are legal.
+	// offset & n are legal. Both of offset & n are uid.GrainSize aligned and are in object size.
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error

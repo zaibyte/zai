@@ -28,7 +28,7 @@ func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration)
 }
 
 func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
-	panic("implement me")
+	return p.base.GetObj(oid, buf, offset, n, isClone, timeout)
 }
 
 func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {
