@@ -7,14 +7,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	"g.tesamc.com/IT/zaipkg/xmath/xrand"
-
 	kc "g.tesamc.com/IT/keeper/client"
 	"g.tesamc.com/IT/zaipkg/orpc"
 	"g.tesamc.com/IT/zaipkg/orpc/otcp"
 	"g.tesamc.com/IT/zaipkg/uid"
 	"g.tesamc.com/IT/zaipkg/xerrors"
 	"g.tesamc.com/IT/zaipkg/xlog"
+	"g.tesamc.com/IT/zaipkg/xmath/xrand"
 	"g.tesamc.com/IT/zproto/pkg/metapb"
 )
 
@@ -176,8 +175,8 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone boo
 	return
 }
 
-func (b *BaseClient) DeleteObj(oid uint64, timeout time.Duration) error {
-	panic("implement me")
+func (b *BaseClient) DeleteObj(oid uint64, _timeout time.Duration) error {
+	return b.kfc.DeleteObj(oid)
 }
 
 func (b *BaseClient) Close(err error) {
