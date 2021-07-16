@@ -22,7 +22,6 @@ type BaseClient struct {
 	cfg      *Config
 	kfc      kc.FClient
 	oclients sync.Map // zBuf_addr : orpc.Client
-	fatigues sync.Map // disk_id:fatigues (float64)
 }
 
 var _baseClient Client = new(BaseClient)
@@ -180,7 +179,14 @@ func (b *BaseClient) DeleteObj(oid uint64, _timeout time.Duration) error {
 }
 
 func (b *BaseClient) Close(err error) {
-	panic("implement me")
+
+	b.kfc.Close()
+
+	b.oclients.Range(func(key, value interface{}) bool {
+		oc := value.(orpc.Client)
+		oc.Close(err)
+		return true
+	})
 }
 
 func (b *BaseClient) getOClient(addr string) (orpc.Client, error) {
