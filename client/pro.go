@@ -1,64 +1,40 @@
 package client
 
 import (
-	"context"
 	"time"
-
-	"g.tesamc.com/IT/zaipkg/xdigest"
-
-	kc "g.tesamc.com/IT/keeper/client"
 )
 
 // ProClient is professional ObjClient which implements ObjClient interface with cache & advanced features.
 type ProClient struct {
-	cfg *Config
-	kfc kc.FClient
+	base *BaseClient
 }
 
-var _proClient ObjClient = new(ProClient)
+var _proClient Client = new(ProClient)
 
 func NewProClient(cfg *Config) (*ProClient, error) {
 
-	kfc, err := kc.NewFC(cfg.KeeperConfig)
+	b, err := NewBaseClient(cfg)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ProClient{
-		cfg: cfg,
-		kfc: kfc,
+		base: b,
 	}, nil
 }
 
-func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, size int64, err error) {
-
-	if digest == 0 {
-		xdigest.Sum32(objData)
-	}
-
-	for i := 0; i < 3; i++ {
-
-		ctx, cancel := context.WithTimeout(context.Background(), timeout)
-		p.kfc.GetWritableGroup(ctx, len(objData))
-	}
+func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
+	return p.base.PutObj(objData, digest, timeout)
 }
 
-func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (size int64, err error) {
+func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
 	panic("implement me")
 }
 
 func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {
-	panic("implement me")
-}
-
-func (p *ProClient) Start() error {
-	panic("implement me")
-}
-
-func (p *ProClient) Stop() {
-	panic("implement me")
+	return p.base.DeleteObj(oid, timeout)
 }
 
 func (p *ProClient) Close(err error) {
-	panic("implement me")
+	p.base.Close(err)
 }
