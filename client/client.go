@@ -53,4 +53,6 @@ type ObjClient interface {
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
+
+	Close(err error)
 }
