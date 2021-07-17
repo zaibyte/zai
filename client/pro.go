@@ -2,6 +2,8 @@ package client
 
 import (
 	"time"
+
+	"g.tesamc.com/IT/zproto/pkg/keeperpb"
 )
 
 // ProClient is professional ObjClient which implements ObjClient interface with cache & advanced features.
@@ -33,6 +35,10 @@ func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool
 
 func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {
 	return p.base.DeleteObj(oid, timeout)
+}
+
+func (p *ProClient) GetKeeperClient() keeperpb.KEEPERClient {
+	return p.base.kfc.GetClient()
 }
 
 func (p *ProClient) Close(err error) {

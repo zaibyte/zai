@@ -2,6 +2,8 @@ package client
 
 import (
 	"time"
+
+	"g.tesamc.com/IT/zproto/pkg/keeperpb"
 )
 
 // These timeout is per RPC request timeout.
@@ -53,6 +55,10 @@ type ObjClient interface {
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
+
+	// GetKeeperClient gets keeperpb.KEEPERClient for invokers.
+	// There must be keeper client inside ObjClient.
+	GetKeeperClient() keeperpb.KEEPERClient
 
 	Close(err error)
 }
