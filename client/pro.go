@@ -3,6 +3,8 @@ package client
 import (
 	"time"
 
+	kc "g.tesamc.com/IT/keeper/client"
+
 	"g.tesamc.com/IT/zproto/pkg/keeperpb"
 )
 
@@ -39,6 +41,10 @@ func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {
 
 func (p *ProClient) GetKeeperClient() keeperpb.KEEPERClient {
 	return p.base.kfc.GetClient()
+}
+
+func (p *ProClient) GetFastKeeper() kc.FClient {
+	return p.base.kfc
 }
 
 func (p *ProClient) Close(err error) {

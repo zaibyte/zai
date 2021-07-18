@@ -3,6 +3,7 @@ package client
 import (
 	"time"
 
+	kc "g.tesamc.com/IT/keeper/client"
 	"g.tesamc.com/IT/zproto/pkg/keeperpb"
 )
 
@@ -59,6 +60,9 @@ type ObjClient interface {
 	// GetKeeperClient gets keeperpb.KEEPERClient for invokers.
 	// There must be keeper client inside ObjClient.
 	GetKeeperClient() keeperpb.KEEPERClient
+
+	// GetFastKeeper returns inside kc.FClient for invokers.
+	GetFastKeeper() kc.FClient
 
 	Close(err error)
 }
