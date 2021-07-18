@@ -7,6 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"g.tesamc.com/IT/zproto/pkg/keeperpb"
+
 	kc "g.tesamc.com/IT/keeper/client"
 	"g.tesamc.com/IT/zaipkg/orpc"
 	"g.tesamc.com/IT/zaipkg/orpc/otcp"
@@ -129,6 +131,12 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone boo
 		return err
 	}
 
+	if g.State == metapb.GroupState_Group_Collapse {
+		err = xerrors.WithMessage(orpc.ErrReplicasCollapse, fmt.Sprintf("failed to get obj, oid: %d", oid))
+		xlog.ErrorID(reqid, err.Error())
+		return err
+	}
+
 	candidates := make([]uint32, 0, len(g.Exts))
 	for extID, ext := range g.Exts {
 		if ext.State != metapb.ExtentState_Extent_Clone && ext.State != metapb.ExtentState_Extent_Broken {
@@ -176,6 +184,14 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone boo
 
 func (b *BaseClient) DeleteObj(oid uint64, _timeout time.Duration) error {
 	return b.kfc.DeleteObj(oid)
+}
+
+func (b *BaseClient) GetKeeperClient() keeperpb.KEEPERClient {
+	return b.GetKeeperClient()
+}
+
+func (b *BaseClient) GetFastKeeper() kc.FClient {
+	return b.kfc
 }
 
 func (b *BaseClient) Close(err error) {
