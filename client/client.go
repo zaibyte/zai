@@ -50,7 +50,10 @@ type ObjClient interface {
 	//
 	// Warn:
 	// We assume len(buf) = n,
-	// offset & n are legal. Both of offset & n are in object size.
+	// offset & n are legal and aligned to 4KB (page size).
+	// zBuf is using direct I/O, and in rpc server side it will release the preallocate buffer to aligned_pool,
+	// if the wanted size & offset are not aligned, we may pollute the aligned_pool then cause the I/O error.
+	//
 	// If n == oid.grains * grain_size, ignore offset.
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
