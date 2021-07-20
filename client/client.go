@@ -44,15 +44,12 @@ type ObjClient interface {
 	PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error)
 	// GetObj gets object by oid.
 	// range bytes of object: [offset, offset+n)
-	// If the offset < 0, start with 0.
-	// If offset+n > object_size, it will read until meeting the end of the object.
 	// n is the length you want to get.
-	// Return how many bytes written into buf.
 	// GetObj will try to connect all replicas until succeed.
 	//
 	// Warn:
 	// We assume len(buf) = n,
-	// offset & n are legal. Both of offset & n are uid.GrainSize aligned and are in object size.
+	// offset & n are legal. Both of offset & n are in object size.
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
