@@ -42,6 +42,10 @@ func NewBaseClient(cfg *Config) (*BaseClient, error) {
 
 func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
 
+	if timeout == 0 {
+		timeout = DefaultPutTimeout
+	}
+
 	boxID := uint32(b.cfg.KeeperConfig.BoxID)
 	grains := uint32(len(objData) / uid.GrainSize)
 	replicas := b.kfc.GetReplicas()
@@ -122,6 +126,10 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration
 
 func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
 
+	if timeout == 0 {
+		timeout = DefaultGetTimeout
+	}
+
 	reqid := uid.MakeReqID()
 
 	gid := uid.GetGroupIDFromOID(oid)
@@ -142,6 +150,10 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone boo
 		if ext.State != metapb.ExtentState_Extent_Clone && ext.State != metapb.ExtentState_Extent_Broken {
 			candidates = append(candidates, extID)
 		}
+	}
+
+	if uint32(n) == uid.GetGrains(oid)*uid.GrainSize {
+		offset = 0
 	}
 
 	for i := 0; i < DefaultMaxGetRetries; i++ {

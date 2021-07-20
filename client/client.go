@@ -31,6 +31,7 @@ type Client interface {
 }
 
 // ObjClient is Zai client which provides uid.NormalObj object(in byte slice) accessing.
+// ObjClient could use xbytes.GetBytes(n int) as buffer for saving cost of memory allocation & GC.
 type ObjClient interface {
 	// PutObj puts object to the box which this Zai belongs to (relies on which keeper it's using).
 	// Returns non-zero oid if err is nil.
@@ -50,6 +51,7 @@ type ObjClient interface {
 	// Warn:
 	// We assume len(buf) = n,
 	// offset & n are legal. Both of offset & n are in object size.
+	// If n == oid.grains * grain_size, ignore offset.
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
