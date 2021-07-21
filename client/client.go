@@ -49,7 +49,7 @@ type ObjClient interface {
 	// GetObj will try to connect all replicas until succeed.
 	//
 	// Warn:
-	// We assume len(buf) = n,
+	// We assume len(buf) = n, ( if n == 0, len(buf) must be the whole object size)
 	// offset & n are legal and aligned to 4KB (page size).
 	// zBuf is using direct I/O, and in rpc server side it will release the preallocate buffer to aligned_pool,
 	// if the wanted size & offset are not aligned, we may pollute the aligned_pool then cause the I/O error.
@@ -67,4 +67,33 @@ type ObjClient interface {
 	GetFastKeeper() kc.FClient
 
 	Close(err error)
+}
+
+// NopObjClient implements ObjClient but does nothing for testing only.
+type NopObjClient struct {
+}
+
+func (c NopObjClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
+
+	return 0, nil
+}
+
+func (c NopObjClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
+	return nil
+}
+
+func (c NopObjClient) DeleteObj(oid uint64, timeout time.Duration) error {
+	return nil
+}
+
+func (c NopObjClient) GetKeeperClient() keeperpb.KEEPERClient {
+	return nil
+}
+
+func (c NopObjClient) GetFastKeeper() kc.FClient {
+	return nil
+}
+
+func (c NopObjClient) Close(err error) {
+	return
 }
