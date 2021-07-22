@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"time"
 
 	"g.tesamc.com/IT/zaipkg/linkobj"
@@ -63,15 +64,32 @@ func (p *ProClient) MakeLink(oids []uint64, timeout time.Duration) (oid uint64, 
 	return
 }
 
-func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
+func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n uint64, isClone bool, timeout time.Duration) (err error) {
 
 	otype := uid.GetOType(oid)
 	if otype == uid.NormalObj {
-		return p.base.GetObj(oid, buf, offset, n, isClone, timeout)
+		return p.base.GetObj(oid, buf, uint32(offset), uint32(n), isClone, timeout)
 	}
 
-	// Link Object.
+	los := uid.GetGrains(oid) * uid.GrainSize
+	linkBuf := xbytes.GetBytes(int(los))
+	defer xbytes.PutBytes(linkBuf)
 
+	err = p.base.GetObj(oid, linkBuf, 0, los, isClone, timeout) // Each request has individual timeout.
+	if err != nil {
+		return xerrors.WithMessage(err, fmt.Sprintf("failed to get link_obj: %d for its link", oid))
+	}
+	// Link Object.
+	objOffs := linkobj.GetOffsets(linkBuf, offset, n)
+	var start uint64 = 0
+	for _, off := range objOffs {
+		err = p.base.GetObj(off.Oid, buf[start:start+uint64(off.Size)], off.Offset, off.Size, isClone, timeout)
+		if err != nil {
+			return err
+		}
+		start += uint64(off.Size)
+	}
+	return nil
 }
 
 func (p *ProClient) DeleteObj(oid uint64, timeout time.Duration) error {

@@ -62,7 +62,7 @@ type ObjClient interface {
 	// 2. If n == oid.grains * grain_size, ignore offset.
 	//
 	// 3. len(buf) must be <= 4MB. It's uneconomical to use big buffer.
-	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
+	GetObj(oid uint64, buf []byte, offset, n uint64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
 

@@ -123,7 +123,7 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, otype uint8, timeout 
 }
 
 // GetObj gets normal object by its offset & n.
-func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
+func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n uint32, isClone bool, timeout time.Duration) (err error) {
 
 	if timeout == 0 {
 		timeout = DefaultGetTimeout
@@ -181,7 +181,7 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone boo
 			continue
 		}
 
-		err = c.GetObj(reqid, oid, extID, buf, offset, n, isClone, timeout)
+		err = c.GetObj(reqid, oid, extID, buf, uint32(offset), uint32(n), isClone, timeout)
 		if err != nil {
 			xlog.WarnID(reqid, err.Error())
 			continue
