@@ -36,6 +36,8 @@ type ObjClient interface {
 	// PutObj puts object to the box which this Zai belongs to (relies on which keeper it's using).
 	// Returns non-zero oid if err is nil.
 	//
+	// It's only for normal object.
+	//
 	// objData's size must already be aligned to uid.GrainSize.
 	// PutObj will read the whole objData.
 	//
@@ -43,18 +45,23 @@ type ObjClient interface {
 	//
 	// digest is the digest of objData.
 	PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error)
+
+	// MakeLink links oids to a link object and return the link_obj's oid.
+	MakeLink(oids []uint64, timeout time.Duration) (oid uint64, err error)
 	// GetObj gets object by oid.
 	// range bytes of object: [offset, offset+n)
 	// n is the length you want to get.
 	// GetObj will try to connect all replicas until succeed.
 	//
 	// Warn:
-	// We assume len(buf) = n, ( if n == 0, len(buf) must be the whole object size)
+	// 1. We assume len(buf) = n, ( if n == 0, len(buf) must be the whole object size)
 	// offset & n are legal and aligned to 4KB (page size).
 	// zBuf is using direct I/O, and in rpc server side it will release the preallocate buffer to aligned_pool,
 	// if the wanted size & offset are not aligned, we may pollute the aligned_pool then cause the I/O error.
 	//
-	// If n == oid.grains * grain_size, ignore offset.
+	// 2. If n == oid.grains * grain_size, ignore offset.
+	//
+	// 3. len(buf) must be <= 4MB. It's uneconomical to use big buffer.
 	GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error)
 	// DeleteObj deletes object by oid.
 	DeleteObj(oid uint64, timeout time.Duration) error
@@ -67,33 +74,4 @@ type ObjClient interface {
 	GetFastKeeper() kc.FClient
 
 	Close(err error)
-}
-
-// NopObjClient implements ObjClient but does nothing for testing only.
-type NopObjClient struct {
-}
-
-func (c NopObjClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
-
-	return 0, nil
-}
-
-func (c NopObjClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
-	return nil
-}
-
-func (c NopObjClient) DeleteObj(oid uint64, timeout time.Duration) error {
-	return nil
-}
-
-func (c NopObjClient) GetKeeperClient() keeperpb.KEEPERClient {
-	return nil
-}
-
-func (c NopObjClient) GetFastKeeper() kc.FClient {
-	return nil
-}
-
-func (c NopObjClient) Close(err error) {
-	return
 }

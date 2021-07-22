@@ -19,14 +19,12 @@ import (
 	"g.tesamc.com/IT/zproto/pkg/metapb"
 )
 
-// BaseClient is the basic ObjClient implementation without cache or other advanced features.
+// BaseClient is the basic client implementation for supporting Clients with cache or other advanced features.
 type BaseClient struct {
 	cfg      *Config
 	kfc      kc.FClient
 	oclients sync.Map // zBuf_addr : orpc.Client
 }
-
-var _baseClient Client = new(BaseClient)
 
 func NewBaseClient(cfg *Config) (*BaseClient, error) {
 	kfc, err := kc.NewFC(cfg.KeeperConfig)
@@ -40,7 +38,7 @@ func NewBaseClient(cfg *Config) (*BaseClient, error) {
 	}, nil
 }
 
-func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
+func (b *BaseClient) PutObj(objData []byte, digest uint32, otype uint8, timeout time.Duration) (oid uint64, err error) {
 
 	if timeout == 0 {
 		timeout = DefaultPutTimeout
@@ -124,6 +122,7 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, timeout time.Duration
 	return
 }
 
+// GetObj gets normal object by its offset & n.
 func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
 
 	if timeout == 0 {
