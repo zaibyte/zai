@@ -22,7 +22,7 @@ func (c NopObjClient) MakeLink(oids []uint64, timeout time.Duration) (oid uint64
 	return 0, nil
 }
 
-func (c NopObjClient) GetObj(oid uint64, buf []byte, offset, n int64, isClone bool, timeout time.Duration) (err error) {
+func (c NopObjClient) GetObj(oid uint64, buf []byte, offset, n uint64, isClone bool, timeout time.Duration) (err error) {
 	return nil
 }
 

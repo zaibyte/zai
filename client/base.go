@@ -62,7 +62,7 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, otype uint8, timeout 
 		}
 		cancel()
 
-		oid0 := uid.MakeOID(boxID, g.Id, grains, digest, uid.NormalObj)
+		oid0 := uid.MakeOID(boxID, g.Id, grains, digest, otype)
 		wg := new(sync.WaitGroup)
 		wg.Add(replicas)
 
