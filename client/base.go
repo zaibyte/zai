@@ -151,7 +151,13 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n uint32, isClone bo
 		}
 	}
 
-	if uint32(n) == uid.GetGrains(oid)*uid.GrainSize {
+	maxN := uid.GetGrains(oid) * uid.GrainSize
+
+	if n > uid.GetGrains(oid)*uid.GrainSize {
+		n = maxN
+	}
+
+	if n == maxN {
 		offset = 0
 	}
 
