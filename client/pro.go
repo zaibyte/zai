@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/binary"
 	"fmt"
 	"time"
 
@@ -37,6 +38,19 @@ func NewProClient(cfg *Config) (*ProClient, error) {
 }
 
 func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
+
+	if len(objData) == 0 {
+		objData = xbytes.GetBytes(uid.GrainSize)
+		binary.LittleEndian.PutUint64(objData, uint64(time.Now().UnixNano()))
+		di := xdigest.Acquire()
+		_, _ = di.Write(objData)
+		digest = di.Sum32()
+		xdigest.Release(di)
+		oid, err = p.base.PutObj(objData, digest, uid.NopObj, timeout)
+		xbytes.PutBytes(objData)
+		return
+	}
+
 	return p.base.PutObj(objData, digest, uid.NormalObj, timeout)
 }
 
