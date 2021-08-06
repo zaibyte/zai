@@ -81,6 +81,10 @@ func (p *ProClient) MakeLink(oids []uint64, timeout time.Duration) (oid uint64, 
 func (p *ProClient) GetObj(oid uint64, buf []byte, offset, n uint64, isClone bool, timeout time.Duration) (err error) {
 
 	otype := uid.GetOType(oid)
+	if otype == uid.NopObj {
+		return orpc.ErrNopObj
+	}
+
 	if otype == uid.NormalObj {
 		return p.base.GetObj(oid, buf, uint32(offset), uint32(n), isClone, timeout)
 	}
