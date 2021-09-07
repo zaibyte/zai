@@ -41,6 +41,8 @@ type ObjClient interface {
 	// objData's size must already be aligned to uid.GrainSize.
 	// PutObj will read the whole objData.
 	//
+	// If len(objData) == 0, PutObj will just make an uid.NopObj's oid with the same BoxID as normal one.
+	//
 	// PutObj will try to put object to a group until succeed or reach the max retires.
 	//
 	// digest is the digest of objData.
