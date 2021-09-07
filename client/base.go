@@ -200,6 +200,11 @@ func (b *BaseClient) GetObj(oid uint64, buf []byte, offset, n uint32, isClone bo
 }
 
 func (b *BaseClient) DeleteObj(oid uint64, _timeout time.Duration) error {
+
+	if uid.GetOType(oid) == uid.NopObj {
+		return nil
+	}
+
 	return b.kfc.DeleteObj(oid)
 }
 
