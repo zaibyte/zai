@@ -44,7 +44,6 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, otype uint8, timeout 
 		timeout = DefaultPutTimeout
 	}
 
-	boxID := uint32(b.cfg.KeeperConfig.BoxID)
 	grains := uint32(len(objData) / uid.GrainSize)
 	replicas := b.kfc.GetReplicas()
 	reqid := uid.MakeReqID()
@@ -62,7 +61,7 @@ func (b *BaseClient) PutObj(objData []byte, digest uint32, otype uint8, timeout 
 		}
 		cancel()
 
-		oid0 := uid.MakeOID(boxID, g.Id, grains, digest, otype)
+		oid0 := uid.MakeOID(g.Id, grains, digest, otype)
 		wg := new(sync.WaitGroup)
 		wg.Add(replicas)
 

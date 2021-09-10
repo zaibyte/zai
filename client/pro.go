@@ -39,7 +39,7 @@ func NewProClient(cfg *Config) (*ProClient, error) {
 func (p *ProClient) PutObj(objData []byte, digest uint32, timeout time.Duration) (oid uint64, err error) {
 
 	if len(objData) == 0 {
-		return uid.MakeNopOID(uint32(p.base.cfg.KeeperConfig.BoxID)), nil
+		return uid.MakeNopOID(), nil
 	}
 
 	return p.base.PutObj(objData, digest, uid.NormalObj, timeout)

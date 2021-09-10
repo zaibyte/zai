@@ -42,7 +42,7 @@ func (m *memZai) PutObj(objData []byte, digest uint32, timeout time.Duration) (o
 }
 
 func (m *memZai) put(data []byte, digest uint32, otype uint8) uint64 {
-	oid := uid.MakeOID(m.boxID, m.groupID, uint32(len(data)/uid.GrainSize), digest, otype)
+	oid := uid.MakeOID(m.groupID, uint32(len(data)/uid.GrainSize), digest, otype)
 
 	m.OidData[oid] = data
 	return oid
