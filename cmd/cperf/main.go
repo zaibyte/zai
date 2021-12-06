@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"fmt"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 
@@ -11,6 +14,7 @@ import (
 
 	"g.tesamc.com/IT/zaipkg/xstrconv"
 	memc "github.com/bradfitz/gomemcache/memcache"
+	"github.com/elastic/go-hdrhistogram"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -30,24 +34,35 @@ func main() {
 	}
 
 	var c client
-	if t == "reids" {
+	if t == "redis" {
 		c = newRClient(*addr)
-	} else if t == "memecached" {
+	} else if t == "memcached" {
 		c = newMClient(*addr)
 	} else {
 		log.Fatal("cannot support target: ", t)
 	}
 
 	size := new(typeutil.ByteSize)
-	err := size.UnmarshalText([]byte(*objSize))
-	if err != nil {
-		log.Fatal(err)
+	err1 := size.UnmarshalText([]byte(*objSize))
+	if err1 != nil {
+		log.Fatal(err1)
 	}
 	obj := make([]byte, int(*size))
 
-	err = c.Put([]byte("1"), obj)
-	if err != nil {
-		log.Fatal(err)
+	cnt := *threads
+
+	for i := 1; i <= cnt; i++ {
+		err1 = c.Put([]byte(strconv.Itoa(i)), obj)
+		if err1 != nil {
+			log.Fatal("failed to put:", err1)
+		}
+	}
+
+	lats := hdrhistogram.New(0, int64(time.Second), 3)
+
+	eachThread := 4 * 1024 * 1024 / int(*size)
+	if eachThread < 4 {
+		eachThread = 4
 	}
 
 	wg := new(sync.WaitGroup)
@@ -57,17 +72,41 @@ func main() {
 		go func(i int) {
 			defer wg.Done()
 
-			start := time.Now()
-			_, err := c.Get([]byte("1"))
-			if err != nil {
-				log.Fatal(err)
+			for j := 0; j < eachThread; j++ {
+				start := time.Now()
+				_, err2 := c.Get([]byte(strconv.Itoa(i + 1)))
+				if err2 != nil {
+					log.Fatal("failed to get:", err2, i)
+				}
+				cost := time.Now().Sub(start)
+				_ = lats.RecordValueAtomic(int64(cost))
 			}
-			log.Printf("%d thread cost: %s", time.Now().Sub(start).String())
+
 		}(i)
 	}
 
 	wg.Wait()
 
+	printDelta(lats)
+}
+
+func printDelta(lats *hdrhistogram.Histogram) {
+
+	name := *target
+	fmt.Println(fmt.Sprintf("%s min: %d, avg: %.2f, max: %d",
+		name, lats.Min(), lats.Mean(), lats.Max()))
+	fmt.Println("percentiles (nsec):")
+	fmt.Print(fmt.Sprintf(
+		"|  1.00th=[%d],  5.00th=[%d], 10.00th=[%d], 20.00th=[%d],\n"+
+			"| 30.00th=[%d], 40.00th=[%d], 50.00th=[%d], 60.00th=[%d],\n"+
+			"| 70.00th=[%d], 80.00th=[%d], 90.00th=[%d], 95.00th=[%d],\n"+
+			"| 99.00th=[%d], 99.50th=[%d], 99.90th=[%d], 99.95th=[%d],\n"+
+			"| 99.99th=[%d]\n",
+		lats.ValueAtQuantile(1), lats.ValueAtQuantile(5), lats.ValueAtQuantile(10), lats.ValueAtQuantile(20),
+		lats.ValueAtQuantile(30), lats.ValueAtQuantile(40), lats.ValueAtQuantile(50), lats.ValueAtQuantile(60),
+		lats.ValueAtQuantile(70), lats.ValueAtQuantile(80), lats.ValueAtQuantile(90), lats.ValueAtQuantile(95),
+		lats.ValueAtQuantile(99), lats.ValueAtQuantile(99.5), lats.ValueAtQuantile(99.9), lats.ValueAtQuantile(99.95),
+		lats.ValueAtQuantile(99.99)))
 }
 
 type client interface {
@@ -89,15 +128,20 @@ func newRClient(addr string) *rClient {
 }
 
 func (r *rClient) Put(k, v []byte) error {
-	panic("implement me")
+
+	cmd := r.rc.Set(context.Background(), xstrconv.ToString(k), v, 0)
+	return cmd.Err()
 }
 
 func (r *rClient) Get(k []byte) (v []byte, err error) {
-	panic("implement me")
+
+	cmd := r.rc.Get(context.Background(), xstrconv.ToString(k))
+
+	return cmd.Bytes()
 }
 
 func (r *rClient) Close() {
-	panic("implement me")
+	_ = r.rc.Close()
 }
 
 type mClient struct {
@@ -122,5 +166,7 @@ func (m *mClient) Close() {
 
 func newMClient(addr string) *mClient {
 	mc := memc.New(addr)
+	mc.MaxIdleConns = 200
+	mc.Timeout = 3 * time.Second
 	return &mClient{mc: mc}
 }
