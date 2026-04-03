@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"time"
 
-	"g.tesamc.com/IT/zaipkg/linkobj"
-	"g.tesamc.com/IT/zaipkg/orpc"
-	"g.tesamc.com/IT/zaipkg/xerrors"
+	"github.com/zaibyte/zaipkg/linkobj"
+	"github.com/zaibyte/zaipkg/orpc"
+	"github.com/zaibyte/zaipkg/xerrors"
 
-	"g.tesamc.com/IT/zaipkg/uid"
-	"g.tesamc.com/IT/zaipkg/xbytes"
-	"g.tesamc.com/IT/zaipkg/xdigest"
+	"github.com/zaibyte/zaipkg/uid"
+	"github.com/zaibyte/zaipkg/xbytes"
+	"github.com/zaibyte/zaipkg/xdigest"
 
-	kc "g.tesamc.com/IT/keeper/client"
+	kc "github.com/zaibyte/keeper/client"
 
-	"g.tesamc.com/IT/zproto/pkg/keeperpb"
+	"github.com/zaibyte/zproto/pkg/keeperpb"
 )
 
 // ProClient is professional ObjClient which implements ObjClient interface with cache & advanced features.

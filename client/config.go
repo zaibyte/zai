@@ -1,6 +1,6 @@
 package client
 
-import kc "g.tesamc.com/IT/keeper/client"
+import kc "github.com/zaibyte/keeper/client"
 
 // Config is the configs of Client.
 // I think it makes things easier to share the same config among all kinds of Clients.

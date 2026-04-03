@@ -7,16 +7,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"g.tesamc.com/IT/zproto/pkg/keeperpb"
+	"github.com/zaibyte/zproto/pkg/keeperpb"
 
-	kc "g.tesamc.com/IT/keeper/client"
-	"g.tesamc.com/IT/zaipkg/orpc"
-	"g.tesamc.com/IT/zaipkg/orpc/otcp"
-	"g.tesamc.com/IT/zaipkg/uid"
-	"g.tesamc.com/IT/zaipkg/xerrors"
-	"g.tesamc.com/IT/zaipkg/xlog"
-	"g.tesamc.com/IT/zaipkg/xmath/xrand"
-	"g.tesamc.com/IT/zproto/pkg/metapb"
+	kc "github.com/zaibyte/keeper/client"
+	"github.com/zaibyte/zaipkg/orpc"
+	"github.com/zaibyte/zaipkg/orpc/otcp"
+	"github.com/zaibyte/zaipkg/uid"
+	"github.com/zaibyte/zaipkg/xerrors"
+	"github.com/zaibyte/zaipkg/xlog"
+	"github.com/zaibyte/zaipkg/xmath/xrand"
+	"github.com/zaibyte/zproto/pkg/metapb"
 )
 
 // BaseClient is the basic client implementation for supporting Clients with cache or other advanced features.

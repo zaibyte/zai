@@ -3,8 +3,8 @@ package client
 import (
 	"time"
 
-	kc "g.tesamc.com/IT/keeper/client"
-	"g.tesamc.com/IT/zproto/pkg/keeperpb"
+	kc "github.com/zaibyte/keeper/client"
+	"github.com/zaibyte/zproto/pkg/keeperpb"
 )
 
 // NopObjClient implements ObjClient but does nothing for testing only.

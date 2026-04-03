@@ -9,13 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"g.tesamc.com/IT/zaipkg/typeutil"
-	"g.tesamc.com/IT/zaipkg/xredis"
+	"github.com/zaibyte/zaipkg/typeutil"
+	"github.com/zaibyte/zaipkg/xredis"
 
-	"g.tesamc.com/IT/zaipkg/xstrconv"
 	memc "github.com/bradfitz/gomemcache/memcache"
 	"github.com/elastic/go-hdrhistogram"
 	"github.com/go-redis/redis/v8"
+	"github.com/zaibyte/zaipkg/xstrconv"
 )
 
 var (
@@ -153,6 +153,7 @@ func (m *mClient) Put(k, v []byte) error {
 }
 
 func (m *mClient) Get(k []byte) (v []byte, err error) {
+
 	it, err := m.mc.Get(xstrconv.ToString(k))
 	if err != nil {
 		return nil, err
